@@ -3,8 +3,6 @@ package com.igor.minhasfinancas.api.resource;
 import java.util.List;
 import java.util.Optional;
 
-import javax.persistence.Entity;
-
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -26,7 +24,6 @@ import com.igor.minhasfinancas.model.enums.StatusLancamento;
 import com.igor.minhasfinancas.model.enums.TipoLancamento;
 import com.igor.minhasfinancas.service.LancamentoService;
 import com.igor.minhasfinancas.service.UsuarioService;
-import com.igor.minhasfinancas.service.imple.usuarioServiceImpl;
 
 import lombok.RequiredArgsConstructor;
 

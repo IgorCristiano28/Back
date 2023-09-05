@@ -3,14 +3,11 @@ package com.igor.minhasfinancas.model.repository;
 import java.util.Optional;
 
 import org.assertj.core.api.Assertions;
-import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
-import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase.Replace;
-import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
@@ -18,22 +15,19 @@ import com.igor.minhasfinancas.model.entity.Usuario;
 
 
 @ExtendWith(SpringExtension.class)
-//@ActiveProfiles("test")
-@DataJpaTest
-@AutoConfigureTestDatabase(replace = Replace.NONE)
-public class UsuarioRepositoryTest {
+@SpringBootTest
+@ActiveProfiles("test")
+public class UsuarioRepositoryTestIntegration {
 	
 	@Autowired
 	UsuarioRepository repository;
 	
-	@Autowired
-	TestEntityManager entityManager;
-
-	@Test  @Order(1)
+	@Test 
 	public void deveVerificarAExistenciaDeUmEmail() {
 		//cenario
-		Usuario usuario = criarUsuario();
-		entityManager.persist(usuario);
+		Usuario usuario = Usuario.builder().nome("Igor Cristiano").email("igor_cristiano@hotmail.com").senha("123456").build();
+		repository.save(usuario);
+		
 		
 		//açao/execucao
 		boolean result = repository.existsByEmail("igor_cristiano@hotmail.com");
@@ -44,10 +38,10 @@ public class UsuarioRepositoryTest {
 		
 	}
 	
-	@Test @Order(2)
+	@Test
 	public void deveRetornaFalsoQuandoNaoHouverUsuarioCadastradoComEmail() {
 		//cenario
-		//repository.deleteAll();
+		repository.deleteAll();
 		
 		//acao
 		boolean result =repository.existsByEmail("igor_cristiano@hotmail.com");
@@ -76,7 +70,6 @@ public class UsuarioRepositoryTest {
 	public void deveBuscarUmUsuarPorEmail() {
 		//cenario a classe não pode ter id, se não lanca excesao propriedade do entitymanager
 		Usuario usuario = criarUsuario();
-		entityManager.persist(usuario);
 		
 		//verificao
 		Optional<Usuario> result = repository.findByEmail("igor_cristiano@hotmail.com");
@@ -101,7 +94,7 @@ public class UsuarioRepositoryTest {
 		return   Usuario 
 				.builder()
 				.email("igor_cristiano@hotmail.com")
-				.senha("123456")
+				.senha("1234567")
 				.build();
 		
 		

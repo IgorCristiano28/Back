@@ -12,7 +12,7 @@ public interface UsuarioService {
 	
 	void validarEmail(String email);
 
-	//metodo pra buscar usuario por id, passando o id para o metodo e ele vai retorna o usuario
+	//metodo pra buscar usuario por id, passando o id para o metodo pra retorna o usuario
 		Optional<Usuario> obterPorId(Long id);
 
 }
