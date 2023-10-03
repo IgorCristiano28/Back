@@ -1,8 +1,7 @@
 package com.igor.minhasfinancas.service.imple;
 
-import java.sql.Timestamp;
-import java.time.Instant;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
@@ -17,7 +16,9 @@ import org.springframework.stereotype.Service;
 import com.igor.minhasfinancas.api.dto.ChecklistCustomizadoDTO;
 import com.igor.minhasfinancas.api.dto.ChecklistDTO;
 import com.igor.minhasfinancas.api.dto.ItinerarioDTO;
+import com.igor.minhasfinancas.api.dto.TipoViagemDTO;
 import com.igor.minhasfinancas.api.dto.ViagemChecklistClienteDTO;
+import com.igor.minhasfinancas.api.dto.ViagemDTO;
 import com.igor.minhasfinancas.exception.TipoViagemNotFoundException;
 import com.igor.minhasfinancas.exception.ViagemNotFoundException;
 import com.igor.minhasfinancas.model.entity.Checklist;
@@ -85,10 +86,44 @@ public class ViagemChecklistClienteServiceImpl implements ViagemChecklistCliente
     }
     
     @Override
-	public ViagemChecklistCliente buscarViagemPorId(UUID id) {
-    	return viagemChecklistClienteRepository.findById(id)
+    public ViagemDTO buscarViagemPorId(UUID id) {
+        ViagemChecklistCliente viagem = viagemChecklistClienteRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Viagem não encontrada"));
-	}
+
+        // Mapear a entidade ViagemChecklistCliente para ViagemDTO
+        ViagemDTO viagemDTO = new ViagemDTO();
+        viagemDTO.setCodigoViagemChecklist(viagem.getCodigoViagemChecklist());
+        viagemDTO.setNomeViagemChecklist(viagem.getNomeViagemChecklist());
+        viagemDTO.setDataViagemChecklistIda(viagem.getDataViagemChecklistIda());
+        viagemDTO.setDataViagemChecklistVolta(viagem.getDataViagemChecklistVolta());
+        viagemDTO.setCodigoIdentificacaoPessoa(viagem.getCodigoIdentificacaoPessoa());
+
+        // Mapear o TipoViagemChecklistCliente para TipoViagemDTO
+        TipoViagemChecklistCliente tipoViagem = viagem.getTipoViagem();
+        TipoViagemDTO tipoViagemDTO = new TipoViagemDTO();
+        tipoViagemDTO.setCodigoTipoViagem(tipoViagem.getCodigoTipoViagem());
+        tipoViagemDTO.setNomeTipoViagem(tipoViagem.getNomeTipoViagem());
+
+        viagemDTO.setTipoViagem(tipoViagemDTO);
+
+        // Mapear os Itinerarios para ItinerarioDTOs
+        List<ItinerarioDTO> itinerarioDTOs = new ArrayList<>();
+        for (Itinerario itinerario : viagem.getItinerarios()) {
+            ItinerarioDTO itinerarioDTO = new ItinerarioDTO();
+            itinerarioDTO.setCodigoChecklistItinerario(itinerario.getCodigoChecklistItinerario());
+            // Mapear os outros campos do ItinerarioDTO
+            itinerarioDTOs.add(itinerarioDTO);
+        }
+        viagemDTO.setItinerarios(itinerarioDTOs);
+
+        return viagemDTO;
+    }
+
+
+
+
+
+
     
     @Override
 	public ViagemChecklistCliente atualizarViagem(UUID id, ViagemChecklistClienteDTO viagemChecklistDTO) {
@@ -102,7 +137,16 @@ public class ViagemChecklistClienteServiceImpl implements ViagemChecklistCliente
          viagemChecklist.setCodigoIdentificacaoPessoa(viagemChecklistDTO.getCodigoIdentificacaoPessoa());
          viagemChecklist.setDataHoraManutencaoRegistro(LocalDateTime.now());
 
-         // Você pode continuar atualizando outros campos da viagem conforme necessário
+        
+         UUID tipoViagemId = viagemChecklistDTO.getTipoViagemId();
+         if (tipoViagemId != null) {
+             TipoViagemChecklistCliente tipoViagem = tipoViagemChecklistClienteRepository.getOne(tipoViagemId);
+             viagemChecklist.setTipoViagem(tipoViagem);
+         } else {
+             // Lida com o caso em que o ID do tipo de viagem é nulo, isso pode ser um erro ou um comportamento esperado
+             // lança uma exceção, definir um valor padrão ou realizar outra ação adequada.
+         	throw new TipoViagemNotFoundException(null);
+         }
 
          // Salve a viagem atualizada no banco de dados
          ViagemChecklistCliente viagemAtualizada = viagemChecklistClienteRepository.save(viagemChecklist);
@@ -134,21 +178,26 @@ public class ViagemChecklistClienteServiceImpl implements ViagemChecklistCliente
 		
 	}
     
-    @Override
-    public Itinerario criarItinerario(UUID codigoViagemChecklist, ItinerarioDTO itinerarioDTO) {
-        ViagemChecklistCliente viagemChecklist = viagemChecklistClienteRepository.findById(codigoViagemChecklist)
-                .orElseThrow(() -> new RuntimeException("Viagem não encontrada"));
-
-        Itinerario itinerario = new Itinerario();
-        itinerario.setCodigoSiglaPaisOrigem(itinerarioDTO.getCodigoSiglaPaisOrigem());
-        itinerario.setCodigoSiglaPaisDestino(itinerarioDTO.getCodigoSiglaPaisDestino());
-        itinerario.setCodigoLocalidadeDiretorioNacionalEnderecoOrigem(itinerarioDTO.getCodigoLocalidadeDiretorioNacionalEnderecoOrigem());
-        itinerario.setCodigoLocalidadeDiretorioNacionalEnderecoDestino(itinerarioDTO.getCodigoLocalidadeDiretorioNacionalEnderecoDestino());
-
-        itinerario.setViagemChecklist(viagemChecklist);
-
-        return itinerarioRepository.save(itinerario);
-    }
+	/*
+	 * @Override public Itinerario criarItinerario(UUID codigoViagemChecklist,
+	 * ItinerarioDTO itinerarioDTO) { ViagemChecklistCliente viagemChecklist =
+	 * viagemChecklistClienteRepository.findById(codigoViagemChecklist)
+	 * .orElseThrow(() -> new RuntimeException("Viagem não encontrada"));
+	 * 
+	 * Itinerario itinerario = new Itinerario();
+	 * itinerario.setCodigoSiglaPaisOrigem(itinerarioDTO.getCodigoSiglaPaisOrigem())
+	 * ;
+	 * itinerario.setCodigoSiglaPaisDestino(itinerarioDTO.getCodigoSiglaPaisDestino(
+	 * ));
+	 * itinerario.setCodigoLocalidadeDiretorioNacionalEnderecoOrigem(itinerarioDTO.
+	 * getCodigoLocalidadeDiretorioNacionalEnderecoOrigem());
+	 * itinerario.setCodigoLocalidadeDiretorioNacionalEnderecoDestino(itinerarioDTO.
+	 * getCodigoLocalidadeDiretorioNacionalEnderecoDestino());
+	 * 
+	 * itinerario.setViagemChecklist(viagemChecklist);
+	 * 
+	 * return itinerarioRepository.save(itinerario); }
+	 */
 
     @Override
     public Checklist criarChecklist(UUID codigoViagemChecklist, ChecklistDTO checklistDTO) {
@@ -189,5 +238,48 @@ public class ViagemChecklistClienteServiceImpl implements ViagemChecklistCliente
 		// TODO Auto-generated method stub
 		return null;
 	}
+
+	@Override
+	public Itinerario criarItinerario(UUID codigoViagemChecklist, ItinerarioDTO itinerarioDTO) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public List<ViagemDTO> buscarTodasViagensChecklistPessoa(String codigoIdentificacaoPessoa) {
+	    List<ViagemChecklistCliente> viagens = viagemChecklistClienteRepository.findByCodigoIdentificacaoPessoa(codigoIdentificacaoPessoa);
+	    List<ViagemDTO> viagensDTO = new ArrayList<>();
+
+	    for (ViagemChecklistCliente viagem : viagens) {
+	        ViagemDTO viagemDTO = new ViagemDTO();
+	        viagemDTO.setCodigoViagemChecklist(viagem.getCodigoViagemChecklist());
+	        viagemDTO.setNomeViagemChecklist(viagem.getNomeViagemChecklist());
+	        viagemDTO.setDataViagemChecklistIda(viagem.getDataViagemChecklistIda());
+	        viagemDTO.setDataViagemChecklistVolta(viagem.getDataViagemChecklistVolta());
+	        viagemDTO.setCodigoIdentificacaoPessoa(viagem.getCodigoIdentificacaoPessoa());
+
+	        TipoViagemChecklistCliente tipoViagem = viagem.getTipoViagem();
+	        TipoViagemDTO tipoViagemDTO = new TipoViagemDTO();
+	        tipoViagemDTO.setCodigoTipoViagem(tipoViagem.getCodigoTipoViagem());
+	        tipoViagemDTO.setNomeTipoViagem(tipoViagem.getNomeTipoViagem());
+
+	        viagemDTO.setTipoViagem(tipoViagemDTO);
+
+	        List<ItinerarioDTO> itinerarioDTOs = new ArrayList<>();
+	        for (Itinerario itinerario : viagem.getItinerarios()) {
+	            ItinerarioDTO itinerarioDTO = new ItinerarioDTO();
+	            itinerarioDTO.setCodigoChecklistItinerario(itinerario.getCodigoChecklistItinerario());
+	            // Mapear os outros campos do ItinerarioDTO
+	            itinerarioDTOs.add(itinerarioDTO);
+	        }
+	        viagemDTO.setItinerarios(itinerarioDTOs);
+
+	        viagensDTO.add(viagemDTO);
+	    }
+
+	    return viagensDTO;
+	}
+	
+	
 
 }

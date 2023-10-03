@@ -19,6 +19,7 @@ import com.igor.minhasfinancas.api.dto.ChecklistCustomizadoDTO;
 import com.igor.minhasfinancas.api.dto.ChecklistDTO;
 import com.igor.minhasfinancas.api.dto.ItinerarioDTO;
 import com.igor.minhasfinancas.api.dto.ViagemChecklistClienteDTO;
+import com.igor.minhasfinancas.api.dto.ViagemDTO;
 import com.igor.minhasfinancas.model.entity.Checklist;
 import com.igor.minhasfinancas.model.entity.ChecklistCustomizado;
 import com.igor.minhasfinancas.model.entity.Itinerario;
@@ -52,8 +53,8 @@ public class ViagemChecklistClienteController {
 	    }
 
 	    @GetMapping("/{id}")
-	    public ResponseEntity<ViagemChecklistCliente> buscarViagemPorId(@PathVariable UUID id) {
-	        ViagemChecklistCliente viagem = viagemChecklistClienteService.buscarViagemPorId(id);
+	    public ResponseEntity<ViagemDTO> buscarViagemPorId(@PathVariable UUID id) {
+	        ViagemDTO viagem = viagemChecklistClienteService.buscarViagemPorId(id);
 	        return ResponseEntity.ok(viagem);
 	    }
 	    
@@ -97,6 +98,13 @@ public class ViagemChecklistClienteController {
 	    public ResponseEntity<ChecklistCustomizado> criarChecklistCustomizado(@PathVariable UUID codigoViagemChecklist, @RequestBody ChecklistCustomizadoDTO checklistCustomizadoDTO) {
 	        ChecklistCustomizado checklistCustomizado = viagemChecklistClienteService.criarChecklistCustomizado(codigoViagemChecklist, checklistCustomizadoDTO);
 	        return new ResponseEntity<>(checklistCustomizado, HttpStatus.CREATED);
+	    }
+	    
+	    @GetMapping("codigo/{codigoIdentificacaoPessoa}")
+	    public ResponseEntity<List<ViagemDTO>> buscarTodasViagensChecklistPessoa(
+	            @PathVariable String codigoIdentificacaoPessoa) {
+	        List<ViagemDTO> viagens = viagemChecklistClienteService.buscarTodasViagensChecklistPessoa(codigoIdentificacaoPessoa);
+	        return ResponseEntity.ok(viagens);
 	    }
 
 

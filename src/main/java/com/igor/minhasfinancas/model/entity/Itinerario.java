@@ -2,6 +2,7 @@ package com.igor.minhasfinancas.model.entity;
 
 import javax.persistence.*;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.igor.minhasfinancas.model.enums.StatusLancamento;
 import com.igor.minhasfinancas.model.enums.TipoLancamento;
 
@@ -10,6 +11,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.UUID;
 
@@ -38,17 +40,20 @@ public class Itinerario {
     @Column(name = "codigo_localidade_diretorio_nacional_endereco_destino")
     private String codigoLocalidadeDiretorioNacionalEnderecoDestino;
 
-    @Temporal(TemporalType.TIMESTAMP)
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyy-MM-dd'T'HH:mm:ss")
     @Column(name = "data_hora_inclusao_registro")
-    private Date dataHoraInclusaoRegistro;
+    private LocalDateTime dataHoraInclusaoRegistro;
 
-    @Temporal(TemporalType.TIMESTAMP)
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyy-MM-dd'T'HH:mm:ss")
     @Column(name = "data_hora_manutencao_registro")
-    private Date dataHoraManutencaoRegistro;
+    private LocalDateTime dataHoraManutencaoRegistro;
 
-    @ManyToOne
-    @JoinColumn(name = "codigo_viagem_checklist")
-    private ViagemChecklistCliente viagemChecklist;
+    //@ManyToOne
+    //@JoinColumn(name = "codigo_viagem_checklist")
+    @Column(name = "codigo_viagem_checklist", columnDefinition = "uuid")
+    private UUID codigoViagemChecklist;
+
+	
 
     // Construtores, getters e setters
 }

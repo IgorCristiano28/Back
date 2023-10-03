@@ -54,7 +54,7 @@ public class ViagemChecklistCliente {
     private TipoViagemChecklistCliente tipoViagem;
 
     // Relacionamento com Itinerario
-    @OneToMany(mappedBy = "viagemChecklist", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "codigoViagemChecklist", cascade = CascadeType.ALL)
     private List<Itinerario> itinerarios;
 
     // Relacionamento com Checklist

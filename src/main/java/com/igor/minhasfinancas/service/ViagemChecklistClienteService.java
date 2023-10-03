@@ -7,6 +7,7 @@ import com.igor.minhasfinancas.api.dto.ChecklistCustomizadoDTO;
 import com.igor.minhasfinancas.api.dto.ChecklistDTO;
 import com.igor.minhasfinancas.api.dto.ItinerarioDTO;
 import com.igor.minhasfinancas.api.dto.ViagemChecklistClienteDTO;
+import com.igor.minhasfinancas.api.dto.ViagemDTO;
 import com.igor.minhasfinancas.model.entity.Checklist;
 import com.igor.minhasfinancas.model.entity.ChecklistCustomizado;
 import com.igor.minhasfinancas.model.entity.Itinerario;
@@ -19,7 +20,7 @@ public interface ViagemChecklistClienteService {
 	    
 	    List<ViagemChecklistCliente> buscarTodasViagensChecklist();
 	    
-	    ViagemChecklistCliente buscarViagemPorId(UUID id);
+	    ViagemDTO buscarViagemPorId(UUID id);
 	    
 	    ViagemChecklistCliente atualizarViagem(UUID id, ViagemChecklistClienteDTO viagemChecklistDTO);
 	    
@@ -33,6 +34,7 @@ public interface ViagemChecklistClienteService {
 	    
 	    ChecklistCustomizado criarChecklistCustomizado(UUID codigoViagemChecklist, ChecklistCustomizadoDTO checklistCustomizadoDTO);
 	    
+	    List<ViagemDTO> buscarTodasViagensChecklistPessoa(String codigoIdentificacaoPessoa);
 	    // Outros métodos, se necessário
 	}
 
