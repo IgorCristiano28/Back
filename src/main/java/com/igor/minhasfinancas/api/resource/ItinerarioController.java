@@ -58,19 +58,7 @@ public class ItinerarioController {
         }
     }
     
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-
-    @DeleteMapping("/{codigoChecklistItinerario}")
+    @DeleteMapping("/viagem/{codigoChecklistItinerario}")
     public ResponseEntity<Void> excluirItinerario(@PathVariable UUID codigoChecklistItinerario) {
         itinerarioService.excluirItinerario(codigoChecklistItinerario);
         return ResponseEntity.noContent().build();

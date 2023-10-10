@@ -3,14 +3,7 @@ package com.igor.minhasfinancas.api.dto;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
-public class ItinerarioDTO {
-	 //private String codigoSiglaPaisOrigem;
-	 //private String codigoSiglaPaisDestino;
-	 //private String codigoLocalidadeDiretorioNacionalEnderecoOrigem;
-	 //private String codigoLocalidadeDiretorioNacionalEnderecoDestino;
-	
-	 //@JsonProperty("codigoViagemChecklist")
-	 //private UUID codigoViagemChecklist;
+public class ItinerarioDTO {	 
 	private UUID codigoChecklistItinerario;
     private String codigoSiglaPaisOrigem;
     private String codigoSiglaPaisDestino;

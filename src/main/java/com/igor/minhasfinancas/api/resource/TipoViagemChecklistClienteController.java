@@ -14,6 +14,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.igor.minhasfinancas.exception.TipoViagemNotFoundException;
+import com.igor.minhasfinancas.model.entity.ErrorResponse;
 import com.igor.minhasfinancas.model.entity.TipoViagemChecklistCliente;
 import com.igor.minhasfinancas.service.TipoViagemChecklistClienteService;
 
@@ -41,15 +43,25 @@ public class TipoViagemChecklistClienteController {
     }
 
     @GetMapping("/{codigoTipoViagem}")
-    public ResponseEntity<TipoViagemChecklistCliente> buscarTipoViagemPorId(@PathVariable UUID codigoTipoViagem) {
+    public ResponseEntity<?> buscarTipoViagemPorId(@PathVariable UUID codigoTipoViagem) {
+    	try {
         TipoViagemChecklistCliente tipoViagem = tipoViagemService.buscarTipoViagemPorId(codigoTipoViagem);
         return ResponseEntity.ok(tipoViagem);
+    	} catch (TipoViagemNotFoundException ex) {
+    		 ErrorResponse errorResponse = new ErrorResponse("Tipo de Viagem não encontrado", ex.getMessage());
+             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorResponse);
+		}
     }
     
     @DeleteMapping("/{codigoTipoViagem}")
     public ResponseEntity<Void> excluirTipoViagemPorCodigo(@PathVariable UUID codigoTipoViagem) {
-        tipoViagemService.excluirTipoViagemPorCodigo(codigoTipoViagem);
-        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        try {
+            tipoViagemService.excluirTipoViagemPorCodigo(codigoTipoViagem);
+            return ResponseEntity.noContent().build();
+        } catch (TipoViagemNotFoundException ex) {
+            // Tratamento da exceção
+            return ResponseEntity.notFound().build();
+        }
     }
 
 }

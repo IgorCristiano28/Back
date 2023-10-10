@@ -12,6 +12,7 @@ public class ViagemDTO {
     private String codigoIdentificacaoPessoa;
     private TipoViagemDTO tipoViagem;
     private List<ItinerarioDTO> itinerarios;
+    private List<ChecklistDTO> checklists;
     
 	public UUID getCodigoViagemChecklist() {
 		return codigoViagemChecklist;
@@ -55,6 +56,10 @@ public class ViagemDTO {
 	public void setItinerarios(List<ItinerarioDTO> itinerarios) {
 		this.itinerarios = itinerarios;
 	}
-
-    
+	public List<ChecklistDTO> getChecklists() {
+		return checklists;
+	}
+	public void setChecklists(List<ChecklistDTO> checklists) {
+		this.checklists = checklists;
+	}
 }

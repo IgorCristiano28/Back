@@ -1,6 +1,6 @@
 package com.igor.minhasfinancas.model.entity;
 
-import java.util.Date;
+import java.time.LocalDateTime;
 import java.util.UUID;
 
 import javax.persistence.Column;
@@ -8,11 +8,8 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
 import javax.persistence.Table;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
+import com.fasterxml.jackson.annotation.JsonFormat;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -37,21 +34,20 @@ public class Checklist {
 
     @Column(name = "codigo_externo_item_checklist")
     private String codigoExternoItemChecklist;
-
+    
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyy-MM-dd'T'HH:mm:ss")
     @Column(name = "data_hora_inclusao_registro")
-    @Temporal(TemporalType.TIMESTAMP)
-    private Date dataHoraInclusaoRegistro;
+    private LocalDateTime dataHoraInclusaoRegistro;
 
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyy-MM-dd'T'HH:mm:ss")
     @Column(name = "data_hora_manutencao_registro")
-    @Temporal(TemporalType.TIMESTAMP)
-    private Date dataHoraManutencaoRegistro;
+    private LocalDateTime dataHoraManutencaoRegistro;
 
     @Column(name = "indicador_item_checklist")
-    private String indicadorItemChecklist;
+    private Short  indicadorItemChecklist;
 
-    @ManyToOne
-    @JoinColumn(name = "codigo_viagem_checklist")
-    private ViagemChecklistCliente viagemChecklist;
+    @Column(name = "codigo_viagem_checklist", columnDefinition = "uuid")
+    private UUID viagemChecklist;
 
 
     // Getters e Setters

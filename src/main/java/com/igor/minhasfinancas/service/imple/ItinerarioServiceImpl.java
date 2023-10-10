@@ -8,14 +8,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.igor.minhasfinancas.api.dto.ItinerarioDTO;
-import com.igor.minhasfinancas.api.dto.ViagemChecklistClienteDTO;
 import com.igor.minhasfinancas.api.dto.ViagemDTO;
 import com.igor.minhasfinancas.exception.ItinerarioNotFoundException;
-import com.igor.minhasfinancas.exception.TipoViagemNotFoundException;
 import com.igor.minhasfinancas.exception.ViagemNotFoundException;
 import com.igor.minhasfinancas.model.entity.Itinerario;
-import com.igor.minhasfinancas.model.entity.TipoViagemChecklistCliente;
-import com.igor.minhasfinancas.model.entity.ViagemChecklistCliente;
 import com.igor.minhasfinancas.model.repository.ItinerarioRepository;
 import com.igor.minhasfinancas.model.repository.ViagemChecklistClienteRepository;
 import com.igor.minhasfinancas.service.ItinerarioService;
@@ -112,12 +108,6 @@ public class ItinerarioServiceImpl implements ItinerarioService {
 		}
 
 		@Override
-		public void excluirItinerario(UUID codigoChecklistItinerario) {
-			// TODO Auto-generated method stub
-			
-		}
-
-		@Override
 		public ItinerarioDTO buscarItinerarioPorId(UUID codigoChecklistItinerario) {
 			// TODO Auto-generated method stub
 			return null;
@@ -128,6 +118,16 @@ public class ItinerarioServiceImpl implements ItinerarioService {
 			// TODO Auto-generated method stub
 			return null;
 		}
+		
+		@Override
+	    public void excluirItinerario(UUID codigoChecklistItinerario) {
+	        // Verifique se o itinerário com o ID fornecido existe
+	        Itinerario itinerario = itinerarioRepository.findById(codigoChecklistItinerario)
+	                .orElseThrow(() -> new ItinerarioNotFoundException("Itinerário não encontrado"));
+
+	        // Remova o itinerário do banco de dados
+	        itinerarioRepository.delete(itinerario);
+	    }
 
 	   
 	}

@@ -1,14 +1,15 @@
 package com.igor.minhasfinancas.service.imple;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
-import javax.persistence.EntityNotFoundException;
 import javax.transaction.Transactional;
-
+import org.apache.logging.log4j.LogManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.igor.minhasfinancas.exception.TipoViagemNotFoundException;
 import com.igor.minhasfinancas.model.entity.TipoViagemChecklistCliente;
 import com.igor.minhasfinancas.model.repository.TipoViagemChecklistClienteRepository;
 import com.igor.minhasfinancas.service.TipoViagemChecklistClienteService;
@@ -17,6 +18,7 @@ import com.igor.minhasfinancas.service.TipoViagemChecklistClienteService;
 public class TipoViagemChecklistClienteServiceImpl implements TipoViagemChecklistClienteService {
 
     private final TipoViagemChecklistClienteRepository tipoViagemRepository;
+    private static final org.apache.logging.log4j.Logger logger = LogManager.getLogger(TipoViagemChecklistClienteServiceImpl.class);
 
     @Autowired
     public TipoViagemChecklistClienteServiceImpl(TipoViagemChecklistClienteRepository tipoViagemRepository) {
@@ -39,14 +41,22 @@ public class TipoViagemChecklistClienteServiceImpl implements TipoViagemChecklis
 
     @Override
     public TipoViagemChecklistCliente buscarTipoViagemPorId(UUID codigoTipoViagem) {
-        return tipoViagemRepository.findById(codigoTipoViagem)
-                .orElseThrow(() -> new EntityNotFoundException("Tipo de Viagem não encontrado"));
+        Optional<TipoViagemChecklistCliente> tipoViagemOptional = tipoViagemRepository.findById(codigoTipoViagem);
+
+        if (tipoViagemOptional.isPresent()) {
+            return tipoViagemOptional.get();
+        } else {
+            throw new TipoViagemNotFoundException("Tipo de Viagem não encontrada para o ID: " + codigoTipoViagem);
+        }
     }
     
     
     @Override
     @Transactional
     public void excluirTipoViagemPorCodigo(UUID codigoTipoViagem) {
-        tipoViagemRepository.deleteByCodigoTipoViagem(codigoTipoViagem);
+        TipoViagemChecklistCliente tipoViagem = tipoViagemRepository.findById(codigoTipoViagem)
+                .orElseThrow(() -> new TipoViagemNotFoundException(codigoTipoViagem));
+
+        tipoViagemRepository.delete(tipoViagem);
     }
 }

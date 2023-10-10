@@ -19,7 +19,6 @@ import com.igor.minhasfinancas.api.dto.ItinerarioDTO;
 import com.igor.minhasfinancas.api.dto.TipoViagemDTO;
 import com.igor.minhasfinancas.api.dto.ViagemChecklistClienteDTO;
 import com.igor.minhasfinancas.api.dto.ViagemDTO;
-import com.igor.minhasfinancas.exception.TipoViagemNotFoundException;
 import com.igor.minhasfinancas.exception.ViagemNotFoundException;
 import com.igor.minhasfinancas.model.entity.Checklist;
 import com.igor.minhasfinancas.model.entity.ChecklistCustomizado;
@@ -74,7 +73,7 @@ public class ViagemChecklistClienteServiceImpl implements ViagemChecklistCliente
         } else {
             // Lida com o caso em que o ID do tipo de viagem é nulo, isso pode ser um erro ou um comportamento esperado
             // lança uma exceção, definir um valor padrão ou realizar outra ação adequada.
-        	throw new TipoViagemNotFoundException(null);
+        	//throw new TipoViagemNotFoundException(null);
         }
 
         return viagemChecklistClienteRepository.save(viagemChecklist);
@@ -115,6 +114,23 @@ public class ViagemChecklistClienteServiceImpl implements ViagemChecklistCliente
             itinerarioDTOs.add(itinerarioDTO);
         }
         viagemDTO.setItinerarios(itinerarioDTOs);
+        
+     // Mapear os Checklists para ChecklistDTOs
+        List<ChecklistDTO> checklistDTOs = new ArrayList<>();
+        for (Checklist checklist : viagem.getChecklists()) {
+            ChecklistDTO checklistDTO = new ChecklistDTO();
+            checklistDTO.setCodigoChecklist(checklist.getCodigoChecklist());
+            checklistDTO.setCodigoExternoCategoria(checklist.getCodigoExternoCategoria());
+            checklistDTO.setCodigoExternoItemChecklist(checklist.getCodigoExternoItemChecklist());
+            checklistDTO.setDataHoraInclusaoRegistro(checklist.getDataHoraInclusaoRegistro());
+            checklistDTO.setDataHoraManutencaoRegistro(checklist.getDataHoraManutencaoRegistro());
+            checklistDTO.setIndicadorItemChecklist(
+                    checklist.getIndicadorItemChecklist() != null && checklist.getIndicadorItemChecklist() == 1
+                );
+            // Mapear os outros campos do ChecklistDTO
+            checklistDTOs.add(checklistDTO);
+        }
+        viagemDTO.setChecklists(checklistDTOs);
 
         return viagemDTO;
     }
@@ -145,7 +161,7 @@ public class ViagemChecklistClienteServiceImpl implements ViagemChecklistCliente
          } else {
              // Lida com o caso em que o ID do tipo de viagem é nulo, isso pode ser um erro ou um comportamento esperado
              // lança uma exceção, definir um valor padrão ou realizar outra ação adequada.
-         	throw new TipoViagemNotFoundException(null);
+         	//throw new TipoViagemNotFoundException(null);
          }
 
          // Salve a viagem atualizada no banco de dados
@@ -199,23 +215,7 @@ public class ViagemChecklistClienteServiceImpl implements ViagemChecklistCliente
 	 * return itinerarioRepository.save(itinerario); }
 	 */
 
-    @Override
-    public Checklist criarChecklist(UUID codigoViagemChecklist, ChecklistDTO checklistDTO) {
-    	 ViagemChecklistCliente viagemChecklist = viagemChecklistClienteRepository.findById(codigoViagemChecklist)
-    	            .orElseThrow(() -> new RuntimeException("Viagem não encontrada"));
-
-    	    Checklist checklist = new Checklist();
-    	    checklist.setCodigoExternoCategoria(checklistDTO.getCodigoExternoCategoria());
-    	    checklist.setCodigoExternoItemChecklist(checklistDTO.getCodigoExternoItemChecklist());
-    	    checklist.setDataHoraInclusaoRegistro(new Date());
-    	    checklist.setDataHoraManutencaoRegistro(new Date());
-    	    checklist.setIndicadorItemChecklist(checklistDTO.getIndicadorItemChecklist());
-
-    	    // Associe o checklist à viagem
-    	    checklist.setViagemChecklist(viagemChecklist);
-
-    	    return checklistRepository.save(checklist);
-    }
+    
 
     @Override
     public ChecklistCustomizado criarChecklistCustomizado(UUID codigoViagemChecklist, ChecklistCustomizadoDTO checklistCustomizadoDTO) {
@@ -278,6 +278,12 @@ public class ViagemChecklistClienteServiceImpl implements ViagemChecklistCliente
 	    }
 
 	    return viagensDTO;
+	}
+
+	@Override
+	public Checklist criarChecklist(UUID codigoViagemChecklist, ChecklistDTO checklistDTO) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 	
 	
