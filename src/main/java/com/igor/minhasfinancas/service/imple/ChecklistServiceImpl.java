@@ -7,11 +7,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.igor.minhasfinancas.api.dto.ChecklistDTO;
+import com.igor.minhasfinancas.exception.ChecklistNotFoundException;
 import com.igor.minhasfinancas.exception.ViagemNotFoundException;
 import com.igor.minhasfinancas.model.entity.Checklist;
 import com.igor.minhasfinancas.model.entity.ViagemChecklistCliente;
 import com.igor.minhasfinancas.model.repository.ChecklistRepository;
-import com.igor.minhasfinancas.model.repository.ItinerarioRepository;
 import com.igor.minhasfinancas.model.repository.ViagemChecklistClienteRepository;
 import com.igor.minhasfinancas.service.ChecklistService;
 import com.igor.minhasfinancas.service.ViagemChecklistClienteService;
@@ -62,4 +62,42 @@ public class ChecklistServiceImpl implements ChecklistService {
     	return checklistRepository.save(checklist);
     }
 
+	@Override
+	public Checklist atualizarChecklist(UUID checklistId, ChecklistDTO checklistDTO) {
+		 Checklist checklistExistente = checklistRepository.findById(checklistId)
+	                .orElseThrow(() -> new RuntimeException("Checklist com ID " + checklistId + " não encontrado."));
+
+		// Verificar e atualizar os campos não nulos no DTO
+		    if (checklistDTO.getCodigoExternoCategoria() != null) {
+		        checklistExistente.setCodigoExternoCategoria(checklistDTO.getCodigoExternoCategoria());
+		    }
+
+		    if (checklistDTO.getCodigoExternoItemChecklist() != null) {
+		        checklistExistente.setCodigoExternoItemChecklist(checklistDTO.getCodigoExternoItemChecklist());
+		    }
+
+		    // Converter booleano para Short
+		    if (checklistDTO.getIndicadorItemChecklist() != null) {
+		        checklistExistente.setIndicadorItemChecklist(checklistDTO.getIndicadorItemChecklist() ? (short) 1 : (short) 0);
+		    }
+
+		    // Atualizar o checklist no banco de dados
+		    return checklistRepository.save(checklistExistente);
+	        
+	}
+
+	@Override
+	public void excluirChecklist(UUID checklistId) {
+		 // Verifique se o checkList com o ID fornecido existe
+        Checklist checklist = checklistRepository.findById(checklistId)
+                .orElseThrow(() -> new ChecklistNotFoundException("Checklist não encontrado"));
+
+        // Remova o checklist do banco de dados
+        checklistRepository.delete(checklist);
+		
+	}
+	
+	
+
+    
 }

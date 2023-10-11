@@ -9,4 +9,7 @@ public interface ChecklistService {
 
 	Checklist criarChecklistAPartirDeViagem(UUID viagemId, ChecklistDTO checklistDTO);
 
+	Checklist atualizarChecklist(UUID checklistId, ChecklistDTO checklistDTO);
+
+	void excluirChecklist(UUID checklistId);
 }
