@@ -16,12 +16,13 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 
-import com.igor.minhasfinancas.api.dto.ItinerarioDTO;
-import com.igor.minhasfinancas.api.dto.ViagemDTO;
-import com.igor.minhasfinancas.exception.ViagemNotFoundException;
-import com.igor.minhasfinancas.model.entity.Itinerario;
-import com.igor.minhasfinancas.model.repository.ItinerarioRepository;
-import com.igor.minhasfinancas.service.imple.ItinerarioServiceImpl;
+import com.igor.backend.api.dto.ItinerarioDTO;
+import com.igor.backend.api.dto.ViagemDTO;
+import com.igor.backend.exception.ViagemNotFoundException;
+import com.igor.backend.model.entity.Itinerario;
+import com.igor.backend.model.repository.ItinerarioRepository;
+import com.igor.backend.service.ViagemChecklistClienteService;
+import com.igor.backend.service.imple.ItinerarioServiceImpl;
 
 @RunWith(MockitoJUnitRunner.class)
 public class ItinerarioServiceImplTest {
